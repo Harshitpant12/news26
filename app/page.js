@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 async function getNews() {
     const res = await fetch(`${process.env.SITE_URL}/api/articles`, {
         cache: "no-store",

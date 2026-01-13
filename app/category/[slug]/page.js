@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 import dbPromise from "../../../lib/db.js";
 import { notFound } from "next/navigation";
 

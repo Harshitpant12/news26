@@ -1,0 +1,6 @@
+{
+  "name": "Auto News",
+  "short_name": "News",
+  "start_url": "/",
+  "display": "standalone"
+}

@@ -1,4 +1,10 @@
-import dbPromise from "../../../../lib/db.js";
+export const runtime = "nodejs";
+
+import {
+    getAllArticles,
+    updateArticle,
+    deleteArticle
+} from "../../../../lib/db.js";
 
 export async function GET(req) {
     const auth = req.headers.get("x-admin-password");
@@ -6,11 +12,7 @@ export async function GET(req) {
         return new Response("Unauthorized", { status: 401 });
     }
 
-    const db = await dbPromise;
-    const articles = await db.all(
-        "SELECT * FROM articles ORDER BY publishedAt DESC"
-    );
-    return Response.json(articles);
+    return Response.json(await getAllArticles());
 }
 
 export async function PUT(req) {
@@ -19,13 +21,8 @@ export async function PUT(req) {
         return new Response("Unauthorized", { status: 401 });
     }
 
-    const { id, title, description, content } = await req.json();
-    const db = await dbPromise;
-
-    await db.run(
-        `UPDATE articles SET title=?, description=?, content=? WHERE id=?`,
-        [title, description, content, id]
-    );
+    const body = await req.json();
+    await updateArticle(body.id, body);
 
     return Response.json({ success: true });
 }
@@ -37,8 +34,7 @@ export async function DELETE(req) {
     }
 
     const { id } = await req.json();
-    const db = await dbPromise;
+    await deleteArticle(id);
 
-    await db.run("DELETE FROM articles WHERE id=?", [id]);
     return Response.json({ success: true });
 }

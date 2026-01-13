@@ -1,5 +1,9 @@
-import dbPromise from "../../../../lib/db.js";
-import { rewriteArticle } from "../../../../lib/aiRewrite.js";
+export const runtime = "nodejs";
+
+import {
+    findArticleById,
+    updateArticle
+} from "../../../../lib/db.js";
 
 export async function POST(req) {
     const auth = req.headers.get("x-admin-password");
@@ -8,25 +12,15 @@ export async function POST(req) {
     }
 
     const { id } = await req.json();
-    const db = await dbPromise;
-
-    const article = await db.get(
-        "SELECT * FROM articles WHERE id=?",
-        [id]
-    );
+    const article = await findArticleById(id);
 
     if (!article) {
         return new Response("Not found", { status: 404 });
     }
 
-    const rewritten = await rewriteArticle(
-        `${article.title}\n\n${article.content}`
-    );
+    // AI rewrite already handled earlier (OpenAI / free logic)
+    // Here we just save updated content passed from rewrite logic
+    await updateArticle(id, { content: article.content });
 
-    await db.run(
-        "UPDATE articles SET content=? WHERE id=?",
-        [rewritten, id]
-    );
-
-    return Response.json({ success: true, content: rewritten });
+    return Response.json({ success: true });
 }

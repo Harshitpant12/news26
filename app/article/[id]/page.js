@@ -1,11 +1,18 @@
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-import dbPromise from "../../../lib/db.js";
+import { findArticleById } from "../../../lib/db.js";
 
+/* ---------- SEO METADATA ---------- */
 export async function generateMetadata({ params }) {
-    const db = await dbPromise;
-    const a = await db.get("SELECT * FROM articles WHERE id=?", [params.id]);
+    const a = await findArticleById(params.id);
+
+    if (!a) {
+        return {
+            title: "Article not found | News26",
+            description: "The requested article could not be found.",
+        };
+    }
 
     return {
         title: `${a.title} | News26`,
@@ -19,10 +26,17 @@ export async function generateMetadata({ params }) {
     };
 }
 
-
+/* ---------- PAGE ---------- */
 export default async function Article({ params }) {
-    const db = await dbPromise;
-    const a = await db.get("SELECT * FROM articles WHERE id=?", [params.id]);
+    const a = await findArticleById(params.id);
+
+    if (!a) {
+        return (
+            <div style={{ textAlign: "center", marginTop: 80 }}>
+                <h1>Article not found</h1>
+            </div>
+        );
+    }
 
     const jsonLd = {
         "@context": "https://schema.org",
@@ -44,7 +58,8 @@ export default async function Article({ params }) {
             },
         },
     };
-    const words = a.content.split(" ").length;
+
+    const words = a.content?.split(" ").length || 0;
     const readingTime = Math.max(1, Math.ceil(words / 200));
 
     return (
@@ -55,21 +70,20 @@ export default async function Article({ params }) {
             />
 
             <h1>{a.title}</h1>
+
             <p style={meta}>
                 {a.source} • {readingTime} min read •{" "}
                 {new Date(a.publishedAt).toLocaleString()}
             </p>
 
-            <p style={meta}>
-                {a.source} • {new Date(a.publishedAt).toLocaleString()}
-            </p>
-
-            {a.image && <img src={a.image} />}
+            {a.image && <img src={a.image} alt={a.title} />}
 
             <div style={content}>{a.content}</div>
         </article>
     );
 }
+
+/* ---------- STYLES ---------- */
 
 const article = {
     maxWidth: "820px",

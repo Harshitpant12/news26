@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-import dbPromise from "../../../lib/db.js";
+import { getAllArticles } from "../../../lib/db.js";
 import { notFound } from "next/navigation";
 
 const CATEGORY_TITLES = {
@@ -23,24 +23,26 @@ export async function generateMetadata({ params }) {
 
 export default async function CategoryPage({ params }) {
     const category = params.slug;
-    const db = await dbPromise;
 
-    const articles = await db.all(
-        "SELECT * FROM articles WHERE category = ? ORDER BY publishedAt DESC",
-        [category]
-    );
+    const allArticles = await getAllArticles();
+
+    const articles = allArticles
+        .filter((a) => a.category === category)
+        .sort(
+            (a, b) =>
+                new Date(b.publishedAt) - new Date(a.publishedAt)
+        );
 
     if (!articles.length) {
-  return (
-    <div style={{ padding: "40px 0" }}>
-      <h1>No articles yet</h1>
-      <p>
-        News26 is updating this category. Please check back shortly.
-      </p>
-    </div>
-  );
-}
-
+        return (
+            <div style={{ padding: "40px 0" }}>
+                <h1>No articles yet</h1>
+                <p>
+                    News26 is updating this category. Please check back shortly.
+                </p>
+            </div>
+        );
+    }
 
     return (
         <>

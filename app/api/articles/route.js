@@ -1,18 +1,24 @@
-import dbPromise from "../../../lib/db.js";
+export const runtime = "nodejs";
+
+import { getAllArticles } from "../../../lib/db.js";
 
 export async function GET(req) {
-  const db = await dbPromise;
   const url = new URL(req.url);
   const category = url.searchParams.get("category");
 
-  const rows = category
-    ? await db.all(
-        "SELECT * FROM articles WHERE category=? ORDER BY publishedAt DESC",
-        [category]
-      )
-    : await db.all(
-        "SELECT * FROM articles ORDER BY publishedAt DESC"
-      );
+  let articles = await getAllArticles();
 
-  return Response.json(rows);
+  if (category) {
+    articles = articles.filter(
+      (a) => a.category === category
+    );
+  }
+
+  // Sort latest first
+  articles.sort(
+    (a, b) =>
+      new Date(b.publishedAt) - new Date(a.publishedAt)
+  );
+
+  return Response.json(articles);
 }

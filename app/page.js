@@ -1,4 +1,3 @@
-import Head from "next/head";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
@@ -23,7 +22,7 @@ export default async function Home() {
     const rest = news.slice(6);
 
     return (
-        <><Head> <meta name="google-site-verification" content="260f36605ddf5f02" /> </Head>
+        <>
             {/* HERO */}
             {hero && (
                 <section style={heroStyle}>

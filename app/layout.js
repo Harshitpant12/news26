@@ -5,6 +5,9 @@ export const metadata = {
     title: "News26 – India & World News",
     description:
         "News26 is a modern Next.js-powered news platform delivering Indian and global news.",
+    verification: {
+        google: "google260f36605ddf5f02.html",
+    },
 };
 
 export default function RootLayout({ children }) {

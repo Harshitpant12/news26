@@ -5,17 +5,11 @@ export const metadata = {
     title: "News26 – India & World News",
     description:
         "News26 is a modern Next.js-powered news platform delivering Indian and global news.",
-    verification: {
-        google: "260f36605ddf5f02",
-    },
 };
 
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <head>
-                <meta name="google-site-verification" content="260f36605ddf5f02" />
-            </head>
             <body>
                 <HeaderClient />
                 <main style={main}>{children}</main>

@@ -6,7 +6,7 @@ export const metadata = {
     description:
         "News26 is a modern Next.js-powered news platform delivering Indian and global news.",
     verification: {
-        google: "google260f36605ddf5f02.html",
+        google: "260f36605ddf5f02",
     },
 };
 
